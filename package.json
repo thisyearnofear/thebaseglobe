@@ -1,0 +1,36 @@
+{
+    "name": "the-base-globe",
+    "version": "1.0.0",
+    "scripts": {
+        "start": "webpack serve --mode development",
+        "build": "NODE_ENV=production webpack --mode production",
+        "dev": "webpack serve --mode development --env development",
+        "analyze": "webpack-bundle-analyzer dist/stats.json",
+        "postbuild": "cp _redirects dist/_redirects"
+    },
+    "devDependencies": {
+        "@babel/core": "^7.26.0",
+        "@babel/plugin-transform-runtime": "^7.25.9",
+        "@babel/preset-env": "^7.26.0",
+        "babel-loader": "^9.2.1",
+        "clean-webpack-plugin": "^4.0.0",
+        "compression-webpack-plugin": "^10.0.0",
+        "copy-webpack-plugin": "^11.0.0",
+        "core-js": "^3.39.0",
+        "html-webpack-plugin": "^5.6.3",
+        "terser-webpack-plugin": "^5.3.10",
+        "webpack": "^5.96.1",
+        "webpack-bundle-analyzer": "^4.10.2",
+        "webpack-cli": "^5.1.4",
+        "webpack-dev-server": "^4.15.1"
+    },
+    "dependencies": {
+        "@ethersproject/contracts": "^5.0.12",
+        "@ethersproject/providers": "^5.7.2",
+        "crypto-browserify": "^3.12.0",
+        "ethers": "^6.13.4",
+        "https-browserify": "^1.0.0",
+        "stream-browserify": "^3.0.0",
+        "stream-http": "^3.2.0"
+    }
+}

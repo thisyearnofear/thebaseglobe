@@ -1,0 +1,294 @@
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>The Base Globe</title>
+    <meta name="description" content="#standwithcrypto $byegary" />
+    <meta name="keywords" content="three.js, game, browser, javascript" />
+    <meta name="author" content="papa" />
+    <link rel="icon" type="image/png" href="favicon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" type="text/css" href="/game.css" />
+    <script src="https://cdn.jsdelivr.net/npm/three@0.139.2/build/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.139.2/examples/js/loaders/OBJLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.139.2/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.10.2/gsap.min.js"></script>
+
+
+ <script src="https://cdn.jsdelivr.net/npm/web3@1.7.0/dist/web3.min.js"></script>
+  <script type="module" src="src/components/WalletConnect.js"></script>
+   </head>
+
+</head>
+  <body>
+    <div id="game-container"></div>
+    <div class="game-holder" id="gameHolder">
+      <div class="header">
+        <div class="header__title-wrap">
+          <h1 class="header__title">
+            <span class="header__title-pre">The</span>
+            <span class="header__title-main">
+              <span class="letter">B</span>
+              <span class="letter">a</span>
+              <span class="letter">s</span>
+              <span class="letter">e</span>
+              <span class="globe-emoji">🌎</span>
+              <span class="letter">l</span>
+              <span class="letter">o</span>
+              <span class="letter">b</span>
+              <span class="letter">e</span>
+            </span>
+          </h1>
+          <h2 class="header__tagline">
+             $byegary
+            <a href="https://www.standwithcrypto.org" class="hover-line">#standwithcrypto</a>
+          </h2>
+        </div>
+      </div>
+
+      <div id="wallet-connect-container">
+        <button id="connect-wallet" class="wallet-button">Connect Wallet</button>
+        <div id="wallet-info" class="wallet-info hidden">
+            <span id="wallet-address"></span>
+        </div>
+    </div>
+    <div id="wallet-modal" class="modal hidden">
+        <div class="modal-content">
+            <h2>Wallet Not Detected</h2>
+            <p>No Ethereum wallet was detected. Please install MetaMask or another Web3 wallet to connect.</p>
+            <button id="close-modal" class="close-button">Close</button>
+        </div>
+    </div>
+
+
+        <div id="score-wrapper" class="score-wrapper hidden">
+          <div class="score" id="score">
+            <div class="score__content" id="level">
+              <div class="score__label">level</div>
+              <div class="score__value score__value--level" id="levelValue">
+                1
+              </div>
+              <svg class="level-circle" id="levelCircle" viewbox="0 0 200 200">
+                <circle
+                  id="levelCircleBgr"
+                  r="80"
+                  cx="100"
+                  cy="100"
+                  fill="none"
+                  stroke="#d1b790"
+                  stroke-width="24px"
+                />
+                <circle
+                  id="levelCircleStroke"
+                  r="80"
+                  cx="100"
+                  cy="100"
+                  fill="none"
+                  #f25346
+                  stroke="#68c3c0"
+                  stroke-width="14px"
+                  stroke-dasharray="502"
+                />
+              </svg>
+            </div>
+            <div class="score__content score__content--fixed" id="dist">
+              <div class="score__label">distance</div>
+              <div class="score__value score__value--dist" id="distValue">
+                0
+              </div>
+            </div>
+            <div class="score__content score__content--fixed" id="coins">
+              <div class="score__label">coins</div>
+              <div class="score__value score__value--dist" id="coinsValue">
+                0
+              </div>
+            </div>
+            <div class="score__content" id="lifes">
+              <div class="score__label">life</div>
+              <img class="heart" src="heart.png" />
+              <img class="heart" src="heart.png" />
+              <img class="heart" src="heart.png" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <nav class="links">
+        <a href="https://warpcast.com/papa" class="hover-line">Papa</a>
+      </nav>
+
+      <div class="world" id="world">
+        <canvas id="threejs-canvas"></canvas>
+      </div>
+
+      <div class="message--replay" id="replayMessage">Click to Replay</div>
+
+      <div id="error">
+        <p><b>Error</b></p>
+        <p id="error-message"></p>
+      </div>
+
+      <div id="new-level">
+        <p>Level</p>
+        <p>1</p>
+      </div>
+
+      <div id="intro-screen" class="visible">
+        <div id="selection-screen">
+          <div class="selection-container">
+            <div id="pilot-selection" class="selection-step active">
+              <div class="selection-options" id="pilot-options">
+                <!-- Pilot options will be dynamically added here -->
+              </div>
+            </div>
+            <div id="aircraft-selection" class="selection-step active">
+              <div class="selection-options" id="aircraft-options">
+                <!-- Aircraft options will be dynamically added here -->
+              </div>
+            </div>
+          </div>
+          <div class="selection-header">
+            <span class="info-icon" id="selection-info">ℹ️</span>
+          </div>
+
+          <div class="info-modal hidden" id="info-modal">
+            <div class="info-content">
+              <div class="token-info">
+                <!-- Add buttons for each check -->
+                <div class="token-check-section">
+                  <p> Own $ByeGary?<br>
+                    GENSLERMODE</p>
+                  <button id="check-base-token" class="check-button">
+                    Check Base Token
+                  </button>
+                  <span id="base-check-status" class="check-status"></span>
+                </div>
+
+                <div class="token-check-section">
+                  <p>Own a BaseGlobe? <br>
+                    NOUNS + FighterJet</p>
+                  <button id="check-zora-token" class="check-button">
+                    Check Zora Token
+                  </button>
+                  <span id="zora-check-status" class="check-status"></span>
+                </div>
+
+                <div class="token-links">
+                  <p>
+                    <a href="https://www.byegary.wtf" target="_blank">$ByeGary</a>
+                    <a href="https://zora.co/collect/zora:0x4a57b15e45d03bd85c8ee38dcff9e2bf0e87dbcf/1" target="_blank">BaseGlobe</a>
+                  </p>
+                </div>
+              </div>
+              <button class="close-info">×</button>
+            </div>
+          </div>
+          <button id="start-game" class="selection-button" disabled>
+            Start
+          </button>
+        </div>
+      </div>
+      <div id="score-screen">
+        <div>
+          <p class="headline">Map complete</p>
+                   <div class="lines">
+            <div>
+              <span>Coins</span>
+              <span
+                ><span id="score-coins-collected">129</span> /
+                <span id="score-coins-total">136</span></span
+              >
+            </div>
+            <div>
+              <span>Enemies killed</span>
+              <span
+                ><span id="score-enemies-killed">3</span> /
+                <span id="score-enemies-total">20</span></span
+              >
+            </div>
+            <div>
+              <span>Shots fired</span>
+              <span><span id="score-shots-fired">9820</span></span>
+            </div>
+            <div>
+              <span>Damage taken</span>
+              <span><span id="score-lifes-lost">1</span></span>
+            </div>
+          </div>
+        </div>
+        <br />
+        <a href="https://zora.co/collect/zora:0x4a57b15e45d03bd85c8ee38dcff9e2bf0e87dbcf/1?referrer=0x55A5705453Ee82c742274154136Fce8149597058" id="stay-based-button" class="stay-based-button" target="_blank" rel="noopener noreferrer">
+          Stay Based
+        </a>
+        <div id="gameplay-snapshot-container" style="margin-top: 20px; text-align: center;">
+          <img id="gameplay-snapshot" alt="Gameplay Snapshot" style="max-width: 100%; margin-top: -10px; margin-bottom: 5px;">
+          <div id="social-share-container"></div>
+        </div>
+      </div>
+    <div id="attribution" style="display: none">
+      <p>
+        Sound effects obtained from https://www.zapsplat.com and
+        https://freesound.org/.<br />
+        <br />
+        This game uses these following sounds from freesound:<br />
+        &nbsp;&nbsp;Sound "Crash" by user "Previsionary"
+        (https://freesound.org/people/Previsionary/sounds/593677) licensed under
+        Creative Commons 0<br />
+        &nbsp;&nbsp;Sound "Bubble Pop" by user "elmasmalo1"
+        (https://freesound.org/people/elmasmalo1/sounds/376968) licensed under
+        Attribution 3.0<br />
+        &nbsp;&nbsp;Sound "Bullet_Impact_2" by user "toxicwafflezz"
+        (https://freesound.org/people/toxicwafflezz/sounds/150838) licensed
+        under Attribution 3.0<br />
+        &nbsp;&nbsp;Sound "Pacific Ocean" by user "tim.kahn"
+        (https://freesound.org/people/tim.kahn/sounds/174763) licensed under
+        Attribution 3.0<br />
+        &nbsp;&nbsp;Sound "Airship propeller engine" by user "ilm0player"
+        (https://freesound.org/people/ilm0player/sounds/578181/) licensed under
+        Creative Commons 0<br />
+        &nbsp;&nbsp;Sound "Rock Smash" by user "NeoSpica"
+        (https://freesound.org/people/NeoSpica/sounds/512243) licensed under
+        Creative Commons 0<br />
+        &nbsp;&nbsp;Sound "Gun shot/bullet hit" by user "coolguy244e"
+        (https://freesound.org/people/coolguy244e/sounds/266916) licensed under
+        Creative Commons 0<br />
+        &nbsp;&nbsp;Sound "Pistol Shot" by user "LeMudCrab"
+        (https://freesound.org/people/LeMudCrab/sounds/163456/) licensed under
+        Creative Commons 0<br />
+        &nbsp;&nbsp;Sound "Water Splash" by user "Yin_Yang_Jake007"
+        (https://freesound.org/people/Yin_Yang_Jake007/sounds/406087/) licensed
+        under Attribution 3.0<br />
+        &nbsp;&nbsp;Sound "Coins - 01" by user "DWOBoyle"
+        (https://freesound.org/people/DWOBoyle/sounds/140382/) licensed under
+        Attribution 3.0<br />
+      </p>
+    </div>
+  
+    <script type="module">
+      import MusicPlayer from "./src/components/MusicPlayer.js";
+
+      // Initialize the music player
+      const musicPlayer = new MusicPlayer();
+    </script>
+
+    <script src="dist/bundle.js" defer></script>
+
+    <script>
+    window.addEventListener('error', function(e) {
+      console.error('Global error:', e);
+      // You could send this to an error tracking service
+    });
+
+    window.addEventListener('unhandledrejection', function(e) {
+      console.error('Unhandled promise rejection:', e);
+      // You could send this to an error tracking service
+    });
+    </script>
+  </body>
+</html>
