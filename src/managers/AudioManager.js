@@ -1,4 +1,4 @@
-// audioManager.js
+// AudioManager.js
 import { loadingProgressManager } from "./LoadingProgressManager.js";
 
 export class AudioManager {
@@ -54,4 +54,4 @@ export class AudioManager {
   }
 }
 
-export const audioManager = new AudioManager();
+export const audioManagerInstance = new AudioManager();
