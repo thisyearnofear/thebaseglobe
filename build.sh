@@ -1,69 +1,87 @@
 #!/bin/bash
 
-# Exit on error
-set -e
+# Exit on error and undefined variables
+set -eu
 
 # Echo commands for debugging
 set -x
 
-# Install dependencies
-echo "Installing dependencies..."
-npm ci
+# Function to log with timestamp
+log() {
+    echo "[$(date '+%Y-%m-%d %H:%M:%S')] $1"
+}
 
-# Ensure src directory exists in the build environment
-echo "Checking source directory structure..."
-if [ ! -d "src" ]; then
-    echo "Creating src directory structure..."
-    mkdir -p src/components
-    mkdir -p src/managers
-    mkdir -p src/utils
-fi
+# Error handler
+trap 'log "Error on line $LINENO"' ERR
+
+# Install dependencies
+log "Installing dependencies..."
+npm ci --prefer-offline --no-audit
+
+# Ensure src directory exists and has correct structure
+log "Checking source directory structure..."
+mkdir -p src/{components,managers,utils}
+
+# Debug: List current directory structure
+log "Current directory structure:"
+ls -R
 
 # Copy source files if they're not in the correct location
-echo "Copying source files..."
-if [ ! -f "src/utils/Utils.js" ]; then
-    cp -r ./src/* ./src/ 2>/dev/null || :
+log "Copying source files..."
+if [ -d "./src" ]; then
+    cp -r ./src/* ./src/ 2>/dev/null || log "No files to copy or already exist"
 fi
 
 # Clean dist directory
-echo "Cleaning dist directory..."
-npm run clean
+log "Cleaning dist directory..."
+rm -rf dist
+mkdir -p dist
 
 # Build the application
-echo "Building application..."
+log "Building application..."
 NODE_ENV=production npm run build
 
 # Verify build output
-echo "Verifying build output..."
+log "Verifying build output..."
 if [ ! -d "dist" ]; then
-    echo "Error: dist directory not created"
+    log "Error: dist directory not created"
     exit 1
 fi
 
-# Create build info
-echo "Creating build info..."
-echo "{\"buildTime\": \"$(date)\", \"version\": \"$(node -p "require('./package.json').version")\"}" > dist/build-info.json
+# Create build info with more details
+log "Creating build info..."
+cat > dist/build-info.json << EOF
+{
+    "buildTime": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")",
+    "version": "$(node -p "require('./package.json').version")",
+    "nodeVersion": "$(node -v)",
+    "environment": "${NODE_ENV:-development}"
+}
+EOF
 
-# Copy any additional required assets
-echo "Copying additional assets..."
+# Copy additional assets
+log "Copying additional assets..."
 if [ -d "public" ]; then
-    cp -r public/* dist/ 2>/dev/null || :
+    cp -r public/* dist/ 2>/dev/null || log "No public assets to copy"
 fi
 
-# Copy redirects file if it exists
+# Copy redirects file
 if [ -f "_redirects" ]; then
-    cp _redirects dist/
+    cp _redirects dist/ || log "Failed to copy _redirects file"
 fi
 
 # List contents of dist directory
-echo "Build completed. Contents of dist directory:"
+log "Build completed. Contents of dist directory:"
 ls -la dist/
 
-# Verify critical files exist
-echo "Verifying critical files..."
-if [ ! -f "dist/index.html" ]; then
-    echo "Error: index.html not found in dist"
-    exit 1
-fi
+# Verify critical files
+log "Verifying critical files..."
+required_files=("index.html" "js/main.*.js" "js/vendors.*.js")
+for file in "${required_files[@]}"; do
+    if ! ls dist/$file 1> /dev/null 2>&1; then
+        log "Error: Required file pattern '$file' not found in dist"
+        exit 1
+    fi
+done
 
-echo "Build script completed successfully"
+log "Build script completed successfully"
