@@ -18,19 +18,9 @@ trap 'log "Error on line $LINENO"' ERR
 log "Installing dependencies..."
 npm ci --prefer-offline --no-audit
 
-# Explicitly install webpack and webpack-cli
-log "Ensuring webpack and webpack-cli are installed..."
-npm install --no-save webpack webpack-cli
-
-# Add node_modules/.bin to PATH
-export PATH="$PATH:$(pwd)/node_modules/.bin"
-
-# Verify webpack installation
-log "Verifying webpack installation..."
-if ! command -v webpack &> /dev/null; then
-    log "ERROR: webpack not found even after installation"
-    exit 1
-fi
+# Debug: Show installed packages
+log "Listing installed packages..."
+npm list webpack webpack-cli
 
 # Ensure src directory exists and has correct structure
 log "Checking source directory structure..."
@@ -53,7 +43,7 @@ mkdir -p dist
 
 # Build the application
 log "Building application..."
-NODE_ENV=production ./node_modules/.bin/webpack --mode production
+NODE_ENV=production npx webpack --mode production --config webpack.config.js
 
 # Verify build output
 log "Verifying build output..."
