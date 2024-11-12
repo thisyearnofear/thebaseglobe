@@ -1,5 +1,5 @@
 import { utils } from "./src/utils/Utils";
-import createAirplaneMesh from "./src/createAirplaneMesh.js";
+import createAirplaneMesh from "./src/CreateAirplaneMesh.js";
 import RainbowCloud from "./src/components/Cloud.js";
 import { audioManager } from "./src/managers/AudioManager.js";
 import { loadingProgressManager } from "./src/managers/LoadingProgressManager.js";

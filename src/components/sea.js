@@ -1,4 +1,4 @@
-import { Colors } from "../utils/Colors";
+import { Colors } from "../utils/Colors.js";
 import { world } from "../../game.js";
 
 export class Sea {
