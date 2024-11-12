@@ -1,11 +1,11 @@
 [build]
   command = "bash ./build.sh"
   publish = "dist"
-  environment = { 
+  environment = [ 
     NODE_VERSION = "18",
     CI = "true",
     NPM_FLAGS = "--no-audit --no-optional"
-  }
+  ]
   
 [[plugins]]
   package = "@netlify/plugin-lighthouse"
