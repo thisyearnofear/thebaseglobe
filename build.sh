@@ -18,6 +18,9 @@ trap 'log "Error on line $LINENO"' ERR
 log "Installing dependencies..."
 npm ci --prefer-offline --no-audit
 
+# Add node_modules/.bin to PATH
+export PATH="$PATH:$(pwd)/node_modules/.bin"
+
 # Ensure src directory exists and has correct structure
 log "Checking source directory structure..."
 mkdir -p src/{components,managers,utils}
@@ -39,7 +42,7 @@ mkdir -p dist
 
 # Build the application
 log "Building application..."
-NODE_ENV=production npm run build
+NODE_ENV=production npx webpack --mode production
 
 # Verify build output
 log "Verifying build output..."
