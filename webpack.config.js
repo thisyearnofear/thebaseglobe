@@ -1,161 +1,121 @@
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
-const { CleanWebpackPlugin } = require("clean-webpack-plugin");
-const CopyWebpackPlugin = require("copy-webpack-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
 const CompressionPlugin = require("compression-webpack-plugin");
+const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 
-// Determine if we're in production mode
-const isProduction = process.env.NODE_ENV === "production";
+module.exports = (env, argv) => {
+  const isProduction = argv.mode === "production";
 
-module.exports = {
-  mode: isProduction ? "production" : "development",
-  entry: "./game.js",
-  output: {
-    filename: isProduction ? "[name].[contenthash].js" : "main.js",
-    path: path.resolve(__dirname, "dist"),
-    publicPath: "",
-    clean: true,
-  },
-  module: {
-    rules: [
-      {
-        test: /\.js$/,
-        exclude: /node_modules/,
-        use: {
-          loader: "babel-loader",
-          options: {
-            presets: [
-              [
-                "@babel/preset-env",
-                {
-                  useBuiltIns: "usage",
-                  corejs: 3,
-                  targets: "> 0.25%, not dead",
-                },
-              ],
-            ],
-            plugins: ["@babel/plugin-transform-runtime"],
+  return {
+    mode: isProduction ? "production" : "development",
+    entry: "./game.js",
+    output: {
+      filename: isProduction ? "[name].[contenthash].js" : "bundle.js",
+      path: path.resolve(__dirname, "dist"),
+      publicPath: "/",
+    },
+
+    optimization: {
+      minimize: isProduction,
+      minimizer: [
+        new TerserPlugin({
+          terserOptions: {
+            compress: {
+              drop_console: isProduction,
+            },
           },
+        }),
+      ],
+      splitChunks: {
+        chunks: "all",
+      },
+    },
+
+    devServer: {
+      static: {
+        directory: path.join(__dirname, "./"),
+      },
+      hot: false, // Disable Hot Module Replacement
+      liveReload: false, // Disable Live Reloading
+      open: true,
+      port: 8080,
+      watchFiles: {
+        paths: [
+          "**/*.html", // Add any other file types you want to watch
+          "**/*.js",
+          "**/*.css",
+        ],
+        options: {
+          ignored: [
+            "**/node_modules/**",
+            "**/dist/**",
+            "**/src/components/WalletConnect.js",
+            "**/src/components/web3Utils.js",
+            "**/src/ethereum/**",
+          ],
         },
       },
-      {
-        test: /\.(mp3|wav)$/i,
-        type: "asset/resource",
-        generator: {
-          filename: "audio/[name][ext]",
-        },
-      },
-      {
-        test: /\.(png|jpg|jpeg|gif|svg)$/i,
-        type: "asset/resource",
-        generator: {
-          filename: "images/[name][ext]",
-        },
-      },
-      {
-        test: /\.(obj|mtl|gltf|glb)$/i,
-        type: "asset/resource",
-        generator: {
-          filename: "models/[name][ext]",
-        },
-      },
-    ],
-  },
-  plugins: [
-    new CleanWebpackPlugin(),
-    new HtmlWebpackPlugin({
-      template: "./index.html",
-      filename: "index.html",
-      inject: "body",
-      minify: isProduction
-        ? {
-            removeComments: true,
-            collapseWhitespace: true,
-            removeRedundantAttributes: true,
-            useShortDoctype: true,
-            removeEmptyAttributes: true,
-            removeStyleLinkTypeAttributes: true,
-            keepClosingSlash: true,
-            minifyJS: true,
-            minifyCSS: true,
-            minifyURLs: true,
-          }
-        : false,
-    }),
-    new CopyWebpackPlugin({
-      patterns: [
+    },
+
+    externals: {
+      three: "THREE",
+      gsap: "gsap",
+      web3: "Web3",
+    },
+
+    module: {
+      rules: [
         {
-          from: "public",
-          to: "",
-          noErrorOnMissing: true,
+          test: /\.(png|svg|jpg|jpeg|gif)$/i,
+          type: "asset/resource",
         },
         {
-          from: "audio",
-          to: "audio",
-          noErrorOnMissing: true,
-        },
-        {
-          from: "models",
-          to: "models",
-          noErrorOnMissing: true,
-        },
-        {
-          from: "*.css",
-          to: "[name][ext]",
-        },
-        {
-          from: "*.png",
-          to: "[name][ext]",
+          test: /\.js$/,
+          exclude: /node_modules/,
+          use: {
+            loader: "babel-loader",
+            options: {
+              presets: ["@babel/preset-env"],
+              plugins: [],
+            },
+          },
         },
       ],
-    }),
-    ...(isProduction
-      ? [
-          new CompressionPlugin({
-            test: /\.(js|css|html|svg)$/,
-            algorithm: "gzip",
-          }),
-        ]
-      : []),
-  ],
-  resolve: {
-    extensions: [".js"],
-    alias: {
-      "@": path.resolve(__dirname, "src/"),
-      components: path.resolve(__dirname, "src/components/"),
-      utils: path.resolve(__dirname, "src/utils/"),
-      managers: path.resolve(__dirname, "src/managers/"),
     },
-  },
-  optimization: {
-    minimize: isProduction,
-    minimizer: [
-      new TerserPlugin({
-        terserOptions: {
-          compress: {
-            drop_console: isProduction,
-            drop_debugger: isProduction,
-          },
-        },
-      }),
-    ],
-    splitChunks: {
-      chunks: "all",
-      cacheGroups: {
-        vendor: {
-          test: /[\\/]node_modules[\\/]/,
-          name: "vendors",
-          chunks: "all",
-        },
+
+    resolve: {
+      extensions: [".js"],
+      fallback: {
+        stream: require.resolve("stream-browserify"),
+        http: require.resolve("stream-http"),
+        https: require.resolve("https-browserify"),
+        crypto: require.resolve("crypto-browserify"),
       },
     },
-    moduleIds: "deterministic",
-  },
-  performance: {
-    hints: isProduction ? "warning" : false,
-    maxEntrypointSize: 512000,
-    maxAssetSize: 512000,
-  },
-  devtool: isProduction ? "source-map" : "eval-source-map",
+
+    devtool: "source-map",
+
+    plugins: [
+      new CleanWebpackPlugin(),
+      new HtmlWebpackPlugin({
+        template: "./index.html",
+        minify: isProduction
+          ? {
+              removeComments: true,
+              collapseWhitespace: true,
+              removeAttributeQuotes: true,
+            }
+          : false,
+      }),
+      ...(isProduction
+        ? [
+            new CompressionPlugin({
+              test: /\.(js|css|html|svg)$/,
+              algorithm: "gzip",
+            }),
+          ]
+        : []),
+    ],
+  };
 };

@@ -1,5 +1,5 @@
 // audioManager.js
-import { loadingProgressManager } from "./loadingProgressManager.js";
+import { loadingProgressManager } from "./LoadingProgressManager.js";
 
 export class AudioManager {
   constructor() {

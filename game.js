@@ -2,7 +2,7 @@ import { utils } from "./src/utils/Utils";
 import createAirplaneMesh from "./src/createAirplaneMesh.js";
 import RainbowCloud from "./src/components/Cloud.js";
 import { audioManager } from "./src/managers/AudioManager.js";
-import { loadingProgressManager } from "./src/managers/loadingProgressManager.js";
+import { loadingProgressManager } from "./src/managers/LoadingProgressManager.js";
 import { modelManager } from "./src/managers/ModelManager.js";
 import { selectionManager } from "./src/managers/SelectionManager.js";
 import GameplaySnapshotManager from "./src/managers/GameplaySnapshotManager.js";
@@ -17,7 +17,7 @@ import {
 import {
   checkBaseTokenOwnership,
   checkZoraTokenOwnership,
-} from "./src/utils/web3Utils";
+} from "./src/utils/web3utils";
 
 let projectileTexture = null;
 let hasSpecialEffects = false;

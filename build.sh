@@ -1,19 +1,20 @@
 #!/bin/bash
 
-# Install dependencies
-npm install
+# Exit on error
+set -e
 
-# Set production environment
-export NODE_ENV=production
+# Install dependencies
+npm ci  # Using ci instead of install for more reliable builds
 
 # Clean dist directory
-rm -rf dist
+npm run clean
 
 # Build the application
 npm run build
 
-# Create redirects file
-echo "/* /index.html 200" > dist/_redirects
-
 # Create build info
 echo "{\"buildTime\": \"$(date)\", \"version\": \"$(node -p "require('./package.json').version")\"}" > dist/build-info.json
+
+# Verify dist directory contents
+echo "Build completed. Contents of dist directory:"
+ls -la dist/
