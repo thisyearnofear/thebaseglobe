@@ -1,4 +1,4 @@
-// src/utils/web3Utils.js
+// src/utils/Web3Utils.js
 
 import { BrowserProvider, Contract } from "ethers";
 

@@ -17,7 +17,7 @@ import {
 import {
   checkBaseTokenOwnership,
   checkZoraTokenOwnership,
-} from "./src/utils/web3utils";
+} from "./src/utils/Web3Utils";
 
 let projectileTexture = null;
 let hasSpecialEffects = false;

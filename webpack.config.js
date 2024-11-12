@@ -76,7 +76,7 @@ module.exports = (env, argv) => {
             "**/node_modules/**",
             "**/dist/**",
             "**/src/components/WalletConnect.js",
-            "**/src/components/web3Utils.js",
+            "**/src/components/Web3Utils.js",
             "**/src/ethereum/**",
           ],
         },
