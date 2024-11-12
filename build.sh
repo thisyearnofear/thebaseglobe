@@ -14,13 +14,16 @@ log() {
 # Error handler
 trap 'log "Error on line $LINENO"' ERR
 
+# Temporarily unset NODE_ENV to install devDependencies
+unset NODE_ENV
+
 # Install dependencies
 log "Installing dependencies..."
 npm ci --prefer-offline --no-audit
 
 # Debug: Show installed packages
 log "Listing installed packages..."
-npm list webpack webpack-cli
+npm list webpack webpack-cli || true
 
 # Ensure src directory exists and has correct structure
 log "Checking source directory structure..."
@@ -43,7 +46,8 @@ mkdir -p dist
 
 # Build the application
 log "Building application..."
-NODE_ENV=production npx webpack --mode production --config webpack.config.js
+export NODE_ENV=production
+npx webpack --mode production --config webpack.config.js
 
 # Verify build output
 log "Verifying build output..."
