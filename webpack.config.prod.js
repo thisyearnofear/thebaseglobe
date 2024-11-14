@@ -4,9 +4,12 @@ const TerserPlugin = require("terser-webpack-plugin");
 
 module.exports = {
   mode: "production",
-  entry: "./game.js",
+  entry: {
+    main: "./game.js",
+    MusicPlayer: "./src/components/MusicPlayer.js",
+  },
   output: {
-    filename: "bundle.[contenthash].js",
+    filename: "js/[name].[contenthash].js",
     path: path.resolve(__dirname, "dist"),
     publicPath: "/",
     clean: true,
@@ -19,20 +22,6 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.(png|svg|jpg|jpeg|gif)$/i,
-        type: "asset/resource",
-        generator: {
-          filename: "assets/[name][ext]",
-        },
-      },
-      {
-        test: /\.(mp3|wav)$/i,
-        type: "asset/resource",
-        generator: {
-          filename: "audio/[name][ext]",
-        },
-      },
-      {
         test: /\.js$/,
         exclude: /node_modules/,
         use: {
@@ -42,35 +31,46 @@ module.exports = {
           },
         },
       },
+      {
+        test: /\.css$/,
+        use: ["style-loader", "css-loader"],
+      },
     ],
   },
   plugins: [
     new CopyPlugin({
       patterns: [
-        {
-          from: "audio",
-          to: "audio",
-        },
-        {
-          from: "models",
-          to: "models",
-        },
-        {
-          from: "public",
-          to: "assets",
-        },
-        {
-          from: "game.css",
-          to: "game.css",
-        },
+        { from: "audio", to: "audio" },
+        { from: "models", to: "models" },
+        { from: "public", to: "assets" },
+        { from: "game.css", to: "game.css" },
         {
           from: "index.html",
           to: "index.html",
+          transform(content) {
+            return content
+              .toString()
+              .replace(
+                'type="module">\n      import MusicPlayer from "./src/components/MusicPlayer.js"',
+                'type="module" src="/js/MusicPlayer.[contenthash].js"'
+              );
+          },
         },
       ],
     }),
   ],
   optimization: {
+    moduleIds: "deterministic",
+    runtimeChunk: "single",
+    splitChunks: {
+      cacheGroups: {
+        vendor: {
+          test: /[\\/]node_modules[\\/]/,
+          name: "vendors",
+          chunks: "all",
+        },
+      },
+    },
     minimize: true,
     minimizer: [new TerserPlugin()],
   },
