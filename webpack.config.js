@@ -3,6 +3,7 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
 const CompressionPlugin = require("compression-webpack-plugin");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
+const CopyWebpackPlugin = require("copy-webpack-plugin");
 
 module.exports = (env, argv) => {
   const isProduction = argv.mode === "production";
@@ -13,7 +14,7 @@ module.exports = (env, argv) => {
     output: {
       path: path.resolve(__dirname, "dist"),
       filename: isProduction ? "js/[name].[contenthash:8].js" : "bundle.js",
-      publicPath: isProduction ? "/" : "/dist/",
+      publicPath: "/",
       clean: true,
     },
 
@@ -36,10 +37,14 @@ module.exports = (env, argv) => {
     module: {
       rules: [
         {
-          test: /\.(png|svg|jpg|jpeg|gif)$/i,
+          test: /\.css$/,
+          use: ["style-loader", "css-loader"],
+        },
+        {
+          test: /\.(png|svg|jpg|jpeg|gif|obj|wav|mp3)$/i,
           type: "asset/resource",
           generator: {
-            filename: "assets/[name].[hash:8][ext]",
+            filename: "assets/[name][ext]",
           },
         },
         {
@@ -48,18 +53,7 @@ module.exports = (env, argv) => {
           use: {
             loader: "babel-loader",
             options: {
-              presets: [
-                [
-                  "@babel/preset-env",
-                  {
-                    useBuiltIns: "usage",
-                    corejs: 3,
-                    targets: "> 0.25%, not dead",
-                  },
-                ],
-              ],
-              plugins: [],
-              cacheDirectory: true,
+              presets: ["@babel/preset-env"],
             },
           },
         },
@@ -68,11 +62,7 @@ module.exports = (env, argv) => {
 
     resolve: {
       extensions: [".js"],
-      alias: {
-        "@": path.resolve(__dirname, "src"),
-      },
       fallback: {
-        stream: require.resolve("stream-browserify"),
         http: require.resolve("stream-http"),
         https: require.resolve("https-browserify"),
         crypto: require.resolve("crypto-browserify"),
@@ -108,6 +98,15 @@ module.exports = (env, argv) => {
           : false,
         filename: "index.html",
         inject: true,
+      }),
+      new CopyWebpackPlugin({
+        patterns: [
+          {
+            from: "public",
+            to: "assets",
+            noErrorOnMissing: true,
+          },
+        ],
       }),
       ...(isProduction
         ? [
