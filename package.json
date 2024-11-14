@@ -2,13 +2,11 @@
     "name": "the-base-globe",
     "version": "1.0.0",
     "scripts": {
-        "start": "npx webpack serve --mode development",
-        "build": "webpack --config webpack.config.prod.js",
+        "build": "webpack --config webpack.config.js",
         "dev": "webpack serve --config webpack.config.js",
         "analyze": "npx webpack-bundle-analyzer dist/stats.json",
         "clean": "rm -rf dist",
-        "prebuild": "npm run clean",
-        "postbuild": "cp _redirects dist/_redirects"
+        "prebuild": "npm run clean"
     },
     "dependencies": {
         "@babel/plugin-transform-runtime": "^7.25.9",

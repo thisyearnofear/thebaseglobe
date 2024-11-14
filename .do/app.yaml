@@ -4,16 +4,16 @@ static_sites:
     github:
       branch: main
       deploy_on_push: true
-      repo: THISYEARNOFEAR/BASEGLOBE
+      repo: thisyearnofear/thebaseglobe
     build_command: npm install && npx webpack
     output_dir: dist
     index_document: index.html
     error_document: index.html
+    catchall_document: index.html
     environment_slug: node-js
     envs:
       - key: NODE_VERSION
         value: 18
-    run_command: npx webpack serve
     routes:
-      - path: /dist
-        rewrite: /
+      - path: /*
+        rewrite: /index.html
