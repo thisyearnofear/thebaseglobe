@@ -7,6 +7,7 @@ import { modelManager } from "./src/managers/ModelManager.js";
 import { selectionManager } from "./src/managers/SelectionManager.js";
 import GameplaySnapshotManager from "./src/managers/GameplaySnapshotManager.js";
 import SocialShare from "./src/components/SocialShare.js";
+import { initializeWalletConnect } from "./src/components/WalletConnect.js";
 
 import {
   Colors,
@@ -1788,3 +1789,8 @@ function initializeTokenChecks() {
     }
   });
 }
+
+// Initialize wallet connect after the DOM is loaded
+document.addEventListener("DOMContentLoaded", () => {
+  initializeWalletConnect();
+});

@@ -75,23 +75,23 @@ async function updateConnectionState(isConnected, userAddress = null) {
   const walletAddress = document.getElementById("wallet-address");
 
   if (!connectButton || !walletInfo || !walletAddress) {
-    console.error("Required DOM elements not found:", {
-      connectButton: !!connectButton,
-      walletInfo: !!walletInfo,
-      walletAddress: !!walletAddress,
-    });
+    console.error("Required DOM elements not found");
     return;
   }
 
   if (isConnected && userAddress) {
     console.log("Showing connected state for address:", userAddress);
+    // Hide connect button and show wallet info
     connectButton.classList.add("hidden");
     walletInfo.classList.remove("hidden");
+
+    // Get and display ENS name or shortened address
     const displayName = await getEnsNameOrShortAddress(userAddress);
     console.log("Display name resolved to:", displayName);
     walletAddress.textContent = displayName;
   } else {
     console.log("Showing disconnected state");
+    // Show connect button and hide wallet info
     connectButton.classList.remove("hidden");
     walletInfo.classList.add("hidden");
     walletAddress.textContent = "";

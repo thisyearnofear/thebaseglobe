@@ -12,75 +12,19 @@ module.exports = (env, argv) => {
     entry: "./game.js",
     output: {
       path: path.resolve(__dirname, "dist"),
-      filename: isProduction
-        ? "js/[name].[contenthash:8].js"
-        : "[name].bundle.js",
-      chunkFilename: isProduction
-        ? "js/[name].[contenthash:8].chunk.js"
-        : "[name].chunk.js",
-      publicPath: "/",
+      filename: isProduction ? "js/[name].[contenthash:8].js" : "bundle.js",
+      publicPath: isProduction ? "/" : "/dist/",
       clean: true,
-    },
-
-    optimization: {
-      minimize: isProduction,
-      minimizer: [
-        new TerserPlugin({
-          terserOptions: {
-            compress: {
-              drop_console: isProduction,
-              drop_debugger: isProduction,
-              pure_funcs: isProduction ? ["console.log"] : [],
-            },
-            format: {
-              comments: false,
-            },
-          },
-          extractComments: false,
-        }),
-      ],
-      splitChunks: {
-        chunks: "all",
-        name: false,
-        cacheGroups: {
-          vendors: {
-            test: /[\\/]node_modules[\\/]/,
-            name: "vendors",
-            chunks: "all",
-            priority: -10,
-          },
-          common: {
-            minChunks: 2,
-            priority: -20,
-            reuseExistingChunk: true,
-            name: "common",
-          },
-        },
-      },
-      runtimeChunk: "single",
-      moduleIds: "deterministic",
     },
 
     devServer: {
       static: {
-        directory: path.join(__dirname, "./"),
+        directory: path.join(__dirname, "/"),
       },
+      compress: true,
+      port: 8080,
       hot: false,
       liveReload: false,
-      open: true,
-      port: 8080,
-      watchFiles: {
-        paths: ["**/*.html", "**/*.js", "**/*.css"],
-        options: {
-          ignored: [
-            "**/node_modules/**",
-            "**/dist/**",
-            "**/src/components/WalletConnect.js",
-            "**/src/components/Web3Utils.js",
-            "**/src/ethereum/**",
-          ],
-        },
-      },
     },
 
     externals: {
@@ -164,7 +108,6 @@ module.exports = (env, argv) => {
           : false,
         filename: "index.html",
         inject: true,
-        cache: true,
       }),
       ...(isProduction
         ? [
