@@ -1,0 +1,18 @@
+name: baseglobe
+static_sites:
+  - name: baseglobe
+    github:
+      branch: main
+      deploy_on_push: true
+      repo: THISYEARNOFEAR/BASEGLOBE
+    build_command: npm install && npm run start
+    output_dir: dist
+    index_document: index.html
+    error_document: index.html
+    environment_slug: node-js
+    envs:
+      - key: NODE_VERSION
+        value: 18
+    routes:
+      - path: /dist
+        rewrite: /
