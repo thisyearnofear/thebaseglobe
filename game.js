@@ -34,7 +34,7 @@ async function initSpecialEffects() {
 }
 
 loadingProgressManager
-  .loadTexture("./public/gens.png")
+  .loadTexture("./assets/gens.png")
   .then((texture) => {
     console.log("Texture loaded:", texture);
     projectileTexture = texture;

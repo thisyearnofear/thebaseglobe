@@ -2,11 +2,10 @@
     "name": "the-base-globe",
     "version": "1.0.0",
     "scripts": {
-        "build": "webpack --config webpack.config.js",
         "dev": "webpack serve --config webpack.config.js",
-        "analyze": "npx webpack-bundle-analyzer dist/stats.json",
-        "clean": "rm -rf dist",
-        "prebuild": "npm run clean"
+        "build": "NODE_ENV=production webpack --config webpack.prod.config.js",
+        "preview": "npm run build && netlify dev --dir=dist",
+        "deploy": "npm run build && netlify deploy --prod"
     },
     "dependencies": {
         "@babel/plugin-transform-runtime": "^7.25.9",
@@ -20,7 +19,6 @@
         "https-browserify": "^1.0.0",
         "stream-browserify": "^3.0.0",
         "stream-http": "^3.2.0",
-        "terser-webpack-plugin": "^5.3.10",
         "webpack": "^5.96.1",
         "webpack-bundle-analyzer": "^4.10.2",
         "webpack-cli": "^5.1.4"
@@ -34,9 +32,13 @@
         "compression-webpack-plugin": "^10.0.0",
         "copy-webpack-plugin": "11.0.0",
         "css-loader": "6.11.0",
+        "http-server": "14.1.1",
         "image-webpack-loader": "8.1.0",
         "jsesc": "3.0.2",
+        "mini-css-extract-plugin": "2.9.2",
+        "serve": "14.2.4",
         "style-loader": "3.3.4",
+        "terser-webpack-plugin": "5.3.10",
         "webpack-dev-server": "^4.15.1"
     },
     "engines": {
