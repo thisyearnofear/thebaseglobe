@@ -5,12 +5,18 @@ const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 
 module.exports = {
   mode: "production",
-  entry: "./game.js",
+  entry: {
+    main: "./game.js",
+    player: "./src/components/MusicPlayer.js",
+  },
   output: {
-    filename: "bundle.js",
+    filename: "[name].bundle.js",
     path: path.resolve(__dirname, "dist"),
     publicPath: "/",
     clean: true,
+    library: {
+      type: "window",
+    },
   },
   optimization: {
     minimize: true,

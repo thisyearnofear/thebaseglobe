@@ -24,7 +24,8 @@
     <script src="https://cdn.jsdelivr.net/npm/web3@1.7.0/dist/web3.min.js"></script>
 
     <link rel="stylesheet" href="game.css" />
-    <script src="/bundle.js" defer></script>
+    <script src="/main.bundle.js" defer></script>
+    <script src="/player.bundle.js" defer></script>
   </head>
   <body>
     <div id="game-container"></div>
@@ -291,11 +292,10 @@
       </p>
     </div>
 
-    <script type="module">
-      import MusicPlayer from "./src/components/MusicPlayer.js";
-
-      // Initialize the music player
-      const musicPlayer = new MusicPlayer();
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const musicPlayer = new window.MusicPlayer();
+      });
     </script>
 
     <script>
