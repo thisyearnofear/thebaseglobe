@@ -8,6 +8,7 @@ import { selectionManager } from "./src/managers/SelectionManager.js";
 import GameplaySnapshotManager from "./src/managers/GameplaySnapshotManager.js";
 import SocialShare from "./src/components/SocialShare.js";
 import { initializeWalletConnect } from "./src/components/WalletConnect.js";
+import { inputManager } from "./src/controls/InputManager";
 
 import {
   Colors,
@@ -422,22 +423,27 @@ class Airplane {
     this.propeller.rotation.x += 0.2 + game.planeSpeed * deltaTime * 0.005;
 
     if (game.status === "playing") {
+      // Get position from UI that works for both mouse/touch and tilt
+      const currentPos = ui.getPosition();
+
       game.planeSpeed = utils.normalize(
-        ui.mousePos.x,
+        currentPos.x,
         -0.5,
         0.5,
         world.planeMinSpeed,
         world.planeMaxSpeed
       );
+
       let targetX = utils.normalize(
-        ui.mousePos.x,
+        currentPos.x,
         -1,
         1,
         -world.planeAmpWidth * 0.7,
         -world.planeAmpWidth
       );
+
       let targetY = utils.normalize(
-        ui.mousePos.y,
+        currentPos.y,
         -0.75,
         0.75,
         world.planeDefaultHeight - world.planeAmpHeight,
@@ -1305,6 +1311,28 @@ class UI {
     this.keysDown = {};
 
     this._resizeListeners = [];
+
+    // Only add touch events if not using tilt controls
+    if (!inputManager.useTiltControls) {
+      document.addEventListener(
+        "touchmove",
+        (event) => {
+          event.preventDefault();
+          this.handleTouchMove(event);
+        },
+        { passive: false }
+      );
+    }
+
+    // Add an update loop for tilt controls
+    if (inputManager.useTiltControls) {
+      const updateTiltPosition = () => {
+        const tiltInput = inputManager.getInput();
+        this.mousePos = tiltInput; // This connects tilt to the plane's movement
+        requestAnimationFrame(updateTiltPosition);
+      };
+      updateTiltPosition();
+    }
   }
 
   onResize(callback) {
@@ -1321,12 +1349,16 @@ class UI {
   }
 
   handleMouseMove(event) {
+    if (inputManager.useTiltControls) return;
+
     var tx = -1 + (event.clientX / this.width) * 2;
     var ty = 1 - (event.clientY / this.height) * 2;
     this.mousePos = { x: tx, y: ty };
   }
 
   handleTouchMove(event) {
+    if (inputManager.useTiltControls) return;
+
     event.preventDefault();
     var tx = -1 + (event.touches[0].pageX / this.width) * 2;
     var ty = 1 - (event.touches[0].pageY / this.height) * 2;
@@ -1487,6 +1519,13 @@ class UI {
   showError(message) {
     document.getElementById("error").style.visibility = "visible";
     document.getElementById("error-message").innerText = message;
+  }
+
+  getPosition() {
+    if (inputManager.useTiltControls) {
+      return inputManager.getInput();
+    }
+    return this.mousePos;
   }
 }
 
@@ -1701,9 +1740,16 @@ function onWebsiteLoaded(event) {
     selectionManager.initSelectionScreen();
   }, gameplaySnapshotManager);
 
-  document.addEventListener("selectionComplete", (event) => {
+  document.addEventListener("selectionComplete", async (event) => {
     const { pilot, aircraft } = event.detail;
-    startMap(pilot, aircraft);
+
+    try {
+      await inputManager.initialize();
+
+      startMap(pilot, aircraft);
+    } catch (error) {
+      console.error("Game initialization failed:", error);
+    }
   });
 
   loadingProgressManager.catch((err) => {
@@ -1720,24 +1766,6 @@ export default game = {
   speed: 0.01,
   canDie: true,
 };
-
-// Add this where you initialize your audio
-function initializeAudio() {
-  // Only initialize audio after user interaction
-  const initAudioButton = document.createElement("button");
-  initAudioButton.textContent = "Click to Enable Audio";
-  initAudioButton.style.position = "fixed";
-  initAudioButton.style.top = "10px";
-  initAudioButton.style.right = "10px";
-  initAudioButton.style.zIndex = "1000";
-
-  initAudioButton.addEventListener("click", () => {
-    // Your audio initialization code here
-    initAudioButton.remove();
-  });
-
-  document.body.appendChild(initAudioButton);
-}
 
 function initializeTokenChecks() {
   const baseCheckButton = document.getElementById("check-base-token");

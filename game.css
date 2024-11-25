@@ -416,24 +416,22 @@ a:focus-visible {
 
 #music-player {
   position: fixed;
-  bottom: 10px;
+  bottom: 20px;
   right: 10px;
-  transform: translateY(-50%);
   z-index: 1000;
-  width: 350px; /* Fixed width */
-  height: 40px; /* Default height (100px visible) */
-  background-color: rgba(0, 0, 0, 0.5); /* Transparent black background */
+  width: 350px;
+  height: 40px;
+  background-color: rgba(0, 0, 0, 0.5);
   border-radius: 10px;
-  overflow: hidden; /* Hide the top part of the iframe */
-  transition: height 0.3s ease, top 0.3s ease; /* Smooth transition for height and top position */
+  overflow: hidden;
 }
 
 #music-player iframe {
   width: 100%;
-  height: 300px; /* Set to the full height of the iframe content */
+  height: 300px;
   border: none;
   position: relative;
-  top: -260px; /* Shift the iframe up to show only the bottom 33% */
+  top: -260px;
 }
 
 #music-player.hidden {
@@ -849,16 +847,6 @@ a:focus-visible {
   vertical-align: middle;
 }
 
-/* Wallet connect container */
-#wallet-connect-container {
-  position: fixed;
-  top: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 1000;
-  text-align: center;
-}
-
 /* Connect Wallet Button Styling */
 #connect-wallet,
 #wallet-info {
@@ -890,7 +878,15 @@ a:focus-visible {
 
 /* Wallet info box */
 #wallet-info {
+  font-size: 12px; /* Smaller font size */
+  padding: 6px 12px; /* Reduced padding */
   background-color: #1f2937; /* Different color when connected */
+  border-radius: 4px;
+}
+
+.gameplay-active .wallet-info {
+  transform: scale(0.8); /* Even smaller during gameplay */
+  opacity: 0.8;
 }
 
 #wallet-address {
@@ -1075,18 +1071,6 @@ a:focus-visible {
   }
 }
 
-/* Responsive adjustments */
-@media (max-width: 640px) {
-  #connect-wallet {
-    width: auto; /* Allow button to size based on content */
-    max-width: 90%; /* Prevent it from being too wide on small screens */
-  }
-
-  .modal-content {
-    padding: 1.5rem;
-  }
-}
-
 @media (max-width: 600px) {
   .selection-container {
     flex-direction: column;
@@ -1235,4 +1219,287 @@ a:focus-visible {
   font-size: 0.9em;
   text-align: center;
   justify-content: center;
+}
+/* Base mobile styles */
+@media (max-width: 768px) {
+  * {
+    touch-action: manipulation;
+  }
+
+  /* Intro screen layout */
+  #intro-screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    padding: 20px;
+  }
+
+  /* Title styles before gameplay */
+  .header__title-wrap {
+    text-align: center;
+    margin: 0 auto 40px;
+    width: 100%;
+  }
+
+  .header__title-main {
+    font-size: 2.5rem;
+    line-height: 1.2;
+  }
+
+  /* Selection screen */
+  .selection-container {
+    width: 90%;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
+    gap: 15px;
+    padding: 15px;
+  }
+
+  /* Gameplay layout adjustments */
+  .game-holder.gameplay-active {
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Header adjustments during gameplay */
+  .header.game-started {
+    height: auto;
+    padding: 10px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    background: transparent;
+    backdrop-filter: none;
+  }
+
+  /* Hide title during gameplay */
+  .gameplay-active .header__title-wrap {
+    display: none !important;
+  }
+
+  /* Score positioning during gameplay */
+  .score-wrapper {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    transform: scale(0.7);
+    transform-origin: top right;
+    display: flex;
+    gap: 8px;
+    z-index: 1002;
+  }
+
+  /* Individual score styling */
+  .score__content {
+    background: rgba(0, 0, 0, 0.5);
+    padding: 6px;
+    border-radius: 6px;
+    backdrop-filter: blur(5px);
+  }
+
+  .score__content {
+    background: rgba(0, 0, 0, 0.5);
+    padding: 6px;
+    border-radius: 6px;
+    backdrop-filter: blur(5px);
+  }
+
+  /* Bottom controls adjustments */
+  .bottom-controls {
+    height: 40px;
+    padding: 0 15px;
+  }
+
+  .bottom-controls .music-player {
+    max-width: 120px;
+    transform: scale(0.8);
+    transform-origin: center;
+  }
+
+  .bottom-controls .wallet-button,
+  #connect-wallet {
+    font-size: 12px;
+    padding: 6px 12px;
+    height: 32px;
+    margin: 0;
+  }
+
+  /* Recalibrate button adjustments */
+  .recalibrate-button {
+    bottom: 60px;
+    left: 10px;
+    padding: 8px 12px;
+    font-size: 14px;
+  }
+
+  /* Position wallet container on bottom right */
+  #wallet-connect-container {
+    position: fixed;
+    top: auto !important; /* Override any other top values */
+    bottom: 80px !important; /* Position from bottom */
+    right: 20px;
+    left: auto !important; /* Override the desktop left:50% */
+    z-index: 1001;
+  }
+
+  /* Keep existing music player positioning */
+  .music-player {
+    bottom: 200px !important;
+    right: 10px;
+    width: 300px;
+    z-index: 1000;
+  }
+}
+
+/* Global styles */
+.bottom-controls {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 50px;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(5px);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 15px;
+  z-index: 1000;
+}
+
+#intro-screen:not(.hidden) ~ .bottom-controls {
+  background: transparent;
+  backdrop-filter: none;
+}
+
+.mobile-prompt-content p {
+  margin-bottom: 20px;
+  font-size: 16px;
+}
+
+.mobile-prompt-content button {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border: none;
+  border-radius: 5px;
+  background: #f1d796;
+  color: #101558;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.mobile-prompt-content button:hover {
+  background: #e5c67a;
+}
+
+.audio-prompt {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1001;
+}
+
+.prompt-content {
+  background: #1a2b4e;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  color: white;
+}
+
+.prompt-content button {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border: none;
+  border-radius: 5px;
+  background: #f1d796;
+  color: #101558;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.replay-overlay .message--replay {
+  color: white;
+  font-size: 24px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+}
+
+.recalibrate-button {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  padding: 10px 20px;
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  border-radius: 5px;
+  color: white;
+  font-size: 16px;
+  z-index: 1000;
+  cursor: pointer;
+  backdrop-filter: blur(5px);
+}
+
+.mobile-control-prompt {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  background: rgba(0, 0, 0, 0.8);
+  padding: 15px;
+  border-radius: 10px;
+  z-index: 1000;
+}
+
+/* Hide wallet button during gameplay to avoid overlap */
+.gameplay-active #connect-wallet {
+  opacity: 0.5;
+  transform: translateX(-50%) scale(0.8);
+  top: 10px; /* Move up slightly during gameplay */
+}
+
+/* Desktop gameplay adjustment */
+.gameplay-active #wallet-connect-container {
+  transform: translateX(-50%) scale(0.8);
+  top: 10px;
+}
+
+/* Base styles for music player */
+.music-player {
+  position: fixed;
+  bottom: 20px;
+  right: 10px;
+  z-index: 1000;
+  width: 350px;
+  height: 40px;
+}
+
+/* Base styles for wallet container */
+#wallet-connect-container {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  text-align: center;
+}
+
+/* Adjust wallet during gameplay on desktop */
+.gameplay-active #wallet-connect-container {
+  transform: translateX(-50%) scale(0.8);
+  top: 10px;
 }

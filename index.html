@@ -3,7 +3,12 @@
   <head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
     <title>The Base Globe</title>
     <meta name="description" content="#standwithcrypto $byegary" />
     <meta name="keywords" content="three.js, game, browser, javascript" />
@@ -56,7 +61,7 @@
       </div>
 
       <div id="wallet-connect-container">
-        <button id="connect-wallet" class="wallet-button">
+        <button id="connect-wallet" class="wallet-button mobile">
           Connect Wallet
         </button>
         <div id="wallet-info" class="wallet-info hidden">
@@ -122,9 +127,14 @@
       </div>
     </div>
 
-    <nav class="links">
+    <div class="bottom-controls">
       <a href="https://warpcast.com/papa" class="hover-line">Papa</a>
-    </nav>
+      <div class="music-player-container">
+        <div id="music-player">
+          <!-- Your existing music player content -->
+        </div>
+      </div>
+    </div>
 
     <div class="world" id="world">
       <canvas id="threejs-canvas"></canvas>
