@@ -1272,11 +1272,6 @@ class UI {
     this._elemsLifes = document.querySelectorAll("#lifes img");
     this._elemCoinsCount = document.getElementById("coinsValue");
 
-    document.querySelector("#intro-screen button").onclick = () => {
-      document.getElementById("intro-screen").classList.remove("visible");
-      onStart();
-    };
-
     document.addEventListener("keydown", this.handleKeyDown.bind(this), false);
     document.addEventListener("keyup", this.handleKeyUp.bind(this), false);
     document.addEventListener(
@@ -1745,6 +1740,8 @@ function onWebsiteLoaded(event) {
 
     try {
       await inputManager.initialize();
+
+      document.getElementById("intro-screen").classList.remove("visible");
 
       startMap(pilot, aircraft);
     } catch (error) {

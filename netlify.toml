@@ -1,9 +1,12 @@
 [build]
   publish = "dist"
   command = "npm run build"
+  # Note: The Focal build image (Ubuntu 20.04) is deprecated. 
+  # Please update to Ubuntu Noble 24.04 in the Netlify UI:
+  # Settings > Build & deploy > Build settings > Build image selection
 
 [build.environment]
-  NODE_VERSION = "18"
+  NODE_VERSION = "20"
   NPM_FLAGS = "--no-audit --no-fund"
 
 [[redirects]]
